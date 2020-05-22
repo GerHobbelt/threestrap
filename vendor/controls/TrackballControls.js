@@ -219,15 +219,15 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 				_eye.multiplyScalar( factor );
 
-				if ( _this.staticMoving ) {
+			}
 
-					_zoomStart.copy( _zoomEnd );
+			if ( _this.staticMoving ) {
 
-				} else {
+				_zoomStart.copy( _zoomEnd );
 
-					_zoomStart.y += ( _zoomEnd.y - _zoomStart.y ) * this.dynamicDampingFactor;
+			} else {
 
-				}
+				_zoomStart.y += ( _zoomEnd.y - _zoomStart.y ) * this.dynamicDampingFactor;
 
 			}
 
@@ -473,23 +473,25 @@ THREE.TrackballControls = function ( object, domElement ) {
 		event.preventDefault();
 		event.stopPropagation();
 
-		var delta = 0;
+		switch ( event.deltaMode ) {
 
-		if ( event.wheelDelta ) {
+                        case 2:
+                                // Zoom in pages
+                                _zoomStart.y -= event.deltaY * 0.025;
+                                break;
 
-			// WebKit / Opera / Explorer 9
+			case 1:
+                                // Zoom in lines
+				_zoomStart.y -= event.deltaY * 0.01;
+				break;
 
-			delta = event.wheelDelta / 40;
-
-		} else if ( event.detail ) {
-
-			// Firefox
-
-			delta = - event.detail / 3;
+			default:
+				// undefined, 0, assume pixels
+				_zoomStart.y -= event.deltaY * 0.00025;
+				break;
 
 		}
 
-		_zoomStart.y += delta * 0.01;
 		_this.dispatchEvent( startEvent );
 		_this.dispatchEvent( endEvent );
 

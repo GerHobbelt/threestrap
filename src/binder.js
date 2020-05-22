@@ -75,7 +75,7 @@ THREE.Binder = {
   apply: function ( object ) {
 
     // THREE.EventDispatcher.prototype.apply(object); // DOESN'T WORK
-    Object.assign(object, THREE.EventDispatcher.prototype)
+    Object.assign( object, THREE.EventDispatcher.prototype );
 
     object.trigger     = THREE.Binder._trigger;
     object.triggerOnce = THREE.Binder._triggerOnce;
