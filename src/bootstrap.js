@@ -146,7 +146,7 @@ THREE.Bootstrap.prototype = {
     plugins = this.resolve(plugins);
 
     // Install in order
-    _.each(plugins, this.__install, this);
+    _.each(plugins, this.__install.bind(this));
 
     // Fire off ready event
     this.__ready();
@@ -161,7 +161,7 @@ THREE.Bootstrap.prototype = {
     }
 
     // Uninstall in reverse order
-    _.eachRight(plugins || this.__installed, this.__uninstall, this);
+    _.eachRight(plugins || this.__installed, this.__uninstall.bind(this));
   },
 
   __install: function (name) {
