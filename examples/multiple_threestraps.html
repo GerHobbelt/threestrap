@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <title>Threestrap - Multiple Threestraps</title>
-  <script type="text/javascript" src="../vendor/three.js"></script>
+  <script type="text/javascript" src="../node_modules/three/build/three.js"></script>
+  <script type="text/javascript" src="../node_modules/three/examples/js/renderers/CSS3DRenderer.js"></script>
   <script type="text/javascript" src="../build/threestrap.js"></script>
 </head>
 <body>
@@ -16,7 +17,7 @@
       position: absolute;
     }
   </style>
-  <h1>WebGL Renderer + Canvas Renderer</h1>
+  <h1>WebGL Renderer + CSS3D Renderer</h1>
   <div id="three"></div>
   <script>
 
@@ -36,33 +37,41 @@
       element: element,
     });
 
-    var canvas2d = THREE.Bootstrap({
+    var css3d = THREE.Bootstrap({
       plugins: ['empty', 'scene', 'render', 'warmup'],
       renderer: {
-        klass: THREE.CanvasRenderer,
-        parameters: {
-          alpha: true,
-        }
+        klass: THREE.CSS3DRenderer,
+        parameters: {}
       },
       element: element,
     });
 
-    // Clear backgrounds
-    webgl   .renderer.setClearColor(0, 0)
-    canvas2d.renderer.setClearColor(0, 0)
+    // Clear background
+    webgl.renderer.setClearColor(0, 0)
 
     // Link cameras
-    canvas2d.camera = webgl.camera;
+    css3d.camera = webgl.camera;
 
     // Insert a webgl cube
     var mesh = new THREE.Mesh(new THREE.BoxGeometry(.5, .5, .5), new THREE.MeshNormalMaterial());
     mesh.position.set(-.5, 0, 0);
     webgl.scene.add(mesh);
 
-    // Insert a canvas2d cube
-    var mesh = new THREE.Mesh(new THREE.BoxGeometry(.5, .5, .5), new THREE.MeshNormalMaterial());
-    mesh.position.set(.5, 0, 0);
-    canvas2d.scene.add(mesh);
+    // Insert a css3d cube
+    // var mesh = new THREE.Mesh(new THREE.BoxGeometry(.5, .5, .5), new THREE.MeshNormalMaterial());
+    // mesh.position.set(.5, 0, 0);
+    var greeting = document.createElement( 'div' )
+    greeting.textContent = 'Hello World!'
+    greeting.style.width = '400px'
+    greeting.style.height = '400px'
+    greeting.style.fontSize = '120px'
+    greeting.style.fontFamily = 'Helvetica'
+    greeting.style.textAlign = 'center'
+    greeting.style.backfaceVisibility = 'hidden'
+    var greetingObject = new THREE.CSS3DObject(greeting)
+    greetingObject.scale.set( 0.00125, 0.00125, 0.00125 )
+    greetingObject.position.z = 0.25
+    css3d.scene.add(greetingObject);
 
     // Orbit the camera
     three.on('update', function () {

@@ -69,7 +69,7 @@ describe("time", function () {
     expect(Math.abs(1/three.Time.average - fps)).toBeLessThan(5);
 
     three.destroy();
-
+    cb();
   });
 
   it("clock runs at half speed", function (cb) {
@@ -112,7 +112,7 @@ describe("time", function () {
     expect(Math.abs(1.0 / three.Time.step - fps / RATIO)).toBeLessThan(5);
 
     three.destroy();
-
+    cb();
   });
 
   it("clock waits N frames then starts from 0", function (cb) {
@@ -153,7 +153,7 @@ describe("time", function () {
     expect(clockTime).toBeLessThan(delta * 2);
 
     three.destroy();
-
+    cb();
   });
 
   it("clock ignores frames longer than timeout", function (cb) {
@@ -195,7 +195,7 @@ describe("time", function () {
     expect(clockTime - start).toBeLessThan(delta * 2);
 
     three.destroy();
-
+    cb();
   });
 
 });

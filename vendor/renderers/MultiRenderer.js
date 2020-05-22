@@ -1,6 +1,7 @@
 /**
  * Allows a stack of renderers to be treated as a single renderer.
  * @author Gheric Speiginer
+ * https://gist.github.com/speigg/6af4527aac8c10d2e46a
  */
 
 THREE.MultiRenderer = function ( parameters ) {

@@ -3,6 +3,15 @@
 
 module.exports = function(config) {
   config.set({
+    client: {
+      jasmine: {
+        random: false,
+        // seed: '4321',
+        stopOnFailure: true,
+        failFast: true,
+        timeoutInterval: 5000
+      }
+    },
 
     // base path, that will be used to resolve files and exclude
     basePath: '',
@@ -24,7 +33,7 @@ module.exports = function(config) {
 
 
     // test results reporter to use
-    // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
+    // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage', 'kjhtml', 'spec'
     reporters: ['progress'],
 
 

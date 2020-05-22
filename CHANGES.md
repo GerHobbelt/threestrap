@@ -1,5 +1,12 @@
 Changes
 ----
+0.0.12-dev
+* Camera: Lower near distance to 0.01 by default.
+* Controls: Ship TrackballControls.
+* Loop: Add `each` option for rendering at (integer) reduced frame rates.
+* Update to latest npm packages; add package-lock file and remove build directory
+* Refer to THREE controls instead; remove extra files
+
 0.0.11
 * Three: Update controls to r76
 * Time: Provide `warmup` option to wait N frames before starting clock (complements render warmup)
@@ -12,7 +19,7 @@ Changes
 
 0.0.10
 * Bootstrap: Can pass in CSS selector for { element: ... } option.
-* Size: handle retina/high-DPI displays to match Three.js changes. 
+* Size: handle retina/high-DPI displays to match Three.js changes.
 
 0.0.9
 * New Extra/VR: `render` replacement for Oculus/Cardboard VR using the `getVRDevices` API and `THREE.VRRenderer`. Specify as `render:vr` or use the `VR` alias, see `examples/vr.html`.

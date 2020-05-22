@@ -1,10 +1,9 @@
-var gulp = require('gulp');
+const { task, src, dest, series, parallel, pipe, watch } = require('gulp');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var rename = require("gulp-rename");
-var karma = require('gulp-karma');
-var runSequence = require('run-sequence');
-var watch = require('gulp-watch');
+
+var karma = require('karma');
 
 var builds = {
   core: 'build/threestrap-core.js',
@@ -42,8 +41,12 @@ var core = [
 ];
 
 var extra = [
-  'vendor/stats.min.js',
-  'vendor/controls/*.js',
+  'node_modules/three/examples/js/libs/stats.min.js',
+  'node_modules/three/examples/js/controls/DeviceOrientationControls.js',
+  'node_modules/three/examples/js/controls/FirstPersonControls.js',
+  'node_modules/three/examples/js/controls/OrbitControls.js',
+  'node_modules/three/examples/js/controls/TrackballControls.js',
+  'vendor/controls/VRControls.js',
   'src/extra/stats.js',
   'src/extra/controls.js',
   'src/extra/cursor.js',
@@ -55,77 +58,101 @@ var extra = [
 var bundle = vendor.concat(core).concat(extra);
 
 var test = [
-  'vendor/three.js',
-].concat(bundle).concat([
+  'node_modules/three/build/three.js',
+].concat(builds.bundle).concat([
   'test/**/*.spec.js',
 ]);
 
-gulp.task('core', function () {
-  return gulp.src(core)
+task('core', function () {
+  return src(core)
     .pipe(concat(builds.core))
-    .pipe(gulp.dest(''));
+    .pipe(dest('.'));
 });
 
-gulp.task('extra', function () {
-  return gulp.src(extra)
+task('extra', function () {
+  return src(extra)
     .pipe(concat(builds.extra))
-    .pipe(gulp.dest(''));
+    .pipe(dest('.'));
 });
 
-gulp.task('bundle', function () {
-  return gulp.src(bundle)
+task('bundle', function () {
+  return src(bundle)
     .pipe(concat(builds.bundle))
-    .pipe(gulp.dest(''));
+    .pipe(dest('.'));
 });
 
-gulp.task('uglify', function () {
-  return gulp.src(products)
+task('uglify-js', function () {
+  return src(products)
     .pipe(uglify())
     .pipe(rename({
-      ext: ".min.js"
+      extname: ".min.js"
     }))
-    .pipe(gulp.dest('build'));
+    .pipe(dest('build'));
 });
 
-gulp.task('karma', function() {
-  return gulp.src(test)
-    .pipe(karma({
-      configFile: 'karma.conf.js',
-      action: 'single',
-    }));
+task('karma', function(done) {
+  new karma.Server({
+    configFile: __dirname + '/karma.conf.js',
+    files: test,
+    singleRun: true,
+  }, function(err) {
+      if (err > 0) {
+        return done(new Error(`Karma exited with status code ${err}`));
+      }
+      done();
+  }).start();
 });
 
-gulp.task('watch-karma', function() {
-  return gulp.src(test)
-    .pipe(karma({
-      configFile: 'karma.conf.js',
-      action: 'watch',
-    }));
+task('watch-karma', function(done) {
+  new karma.Server({
+    configFile: __dirname + '/karma.conf.js',
+    files: test,
+    singleRun: false,
+  }, function(err) {
+      if (err > 0) {
+          return done(new Error(`Karma (watch) exited with status code ${err}`));
+      }
+  }).start();
+  done();
 });
 
-gulp.task('watch-build', function () {
-  gulp.src(bundle)
-    .pipe(
-      watch(function(files) {
-        return gulp.start('build');
-      })
-    );
+// NEW: Add karma runner, triggered after every build
+task('run-karma', function (done) {
+    new karma.runner.run({
+    configFile: __dirname + '/karma.conf.js',
+    files: test,
+    singleRun: true
+  }, function(err) {
+      if (err > 0) {
+          return done(new Error(`Karma runner exited with status code ${err}`));
+      }
+      done();
+    });
+});
+
+task('watch-build', function(done) {
+  watch(bundle, series('build', 'run-karma'));
+  done();
 });
 
 // Main tasks
 
-gulp.task('build', function (callback) {
-  runSequence(['core', 'extra', 'bundle'], callback);
-})
+task('build',
+  series('core', 'extra', 'bundle', function buildEnd(done) {
+  done();
+}));
 
-gulp.task('default', function (callback) {
-  runSequence('build', 'uglify', callback);
-});
+task('default',
+  series('build', 'uglify-js', function defaultEnd(done) {
+  done();
+}));
 
-gulp.task('test', function (callback) {
-  runSequence('build', 'karma', callback);
-});
+task('test',
+  series('build', 'karma', function testEnd(done) {
+  done();
+}));
 
-gulp.task('watch', function (callback) {
-  runSequence('watch-build', 'watch-karma', callback);
-});
+task('watch',
+  series('watch-karma', 'watch-build', function watchEnd(done) {
+  done();
+}));

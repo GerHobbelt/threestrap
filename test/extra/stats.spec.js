@@ -6,15 +6,16 @@ describe("stats", function () {
       plugins: ['bind', 'renderer', 'stats'],
     };
 
-    expect(document.querySelector('#stats')).toBeFalsy();
+    //id:stats removed from THREE.Stats lib
+    expect(document.querySelector('canvas')).toBeFalsy();
 
     var three = new THREE.Bootstrap(options);
 
-    expect(document.querySelector('#stats')).toBeTruthy();
+    expect(document.querySelector('canvas')).toBeTruthy();
 
     three.destroy();
 
-    expect(document.querySelector('#stats')).toBeFalsy();
+    expect(document.querySelector('canvas')).toBeFalsy();
   });
 
 });

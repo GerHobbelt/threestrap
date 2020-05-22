@@ -86,7 +86,7 @@ THREE.VRRenderer = function(renderer, hmd) {
         var width  = renderer.domElement.width  / 2 / dpr;
         var height = renderer.domElement.height / dpr;
 
-        renderer.enableScissorTest(true);
+        renderer.setScissorTest(true);
 
         renderer.setViewport(0, 0, width, height);
         renderer.setScissor (0, 0, width, height);

@@ -4,6 +4,7 @@ THREE.Bootstrap.registerPlugin('loop', {
     start: true,
     force: true,
     rate:  1,
+    each: 1,
   },
 
   listen: ['ready', 'window.resize:reset', 'dirty', 'post'],
@@ -52,8 +53,13 @@ THREE.Bootstrap.registerPlugin('loop', {
     three.Loop.running = this.running = true;
 
     var trigger = three.trigger.bind(three);
+    var frames = 0;
     var loop = function () {
       this.running && requestAnimationFrame(loop);
+      frames = (frames + 1) % Math.max(1, this.options.each);
+      if (frames == 0) {
+        this.events.map(trigger);
+      }
 
       var rate = this.options.rate;
       if (rate <= 1 || (this.frame % rate) == 0) {

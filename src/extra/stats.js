@@ -4,7 +4,7 @@ THREE.Bootstrap.registerPlugin('stats', {
 
   install: function (three) {
 
-    var stats = this.stats = new THREE.Stats();
+    var stats = this.stats = new Stats();
     var style = stats.domElement.style;
 
     style.position = 'absolute';

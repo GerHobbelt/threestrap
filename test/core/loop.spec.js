@@ -18,7 +18,7 @@ describe("loop", function () {
 
   });
 
-  it("starts and stops", function (cb) {
+  it("starts and stops", function () {
 
     var options = {
       plugins: ['loop'],
@@ -65,74 +65,83 @@ describe("loop", function () {
 
   });
 
-  it("loops correctly", function (cb) {
+});
 
-    var pre, update, render, post, three;
+describe("loops correctly", function () {
 
-    function stall(val) {
-      var k, i = 0;
-      var delay = 10;
-      while (+new Date() <= val + delay) {
-        k = ++i * ++i * ++i * ++i * ++i;
-      }
+  var pre, update, render, post, three;
+
+  function stall(val) {
+    var k, i = 0;
+    var delay = 10;
+    while (+new Date() <= val + delay) {
+      k = ++i * ++i * ++i * ++i * ++i;
     }
+  }
 
-    runs(function () {
-      var options = {
-        init: false,
-        plugins: ['bind','loop'],
-      };
+  beforeEach(function (done) {
+    var options = {
+      init: false,
+      plugins: ['bind','loop'],
+    };
 
-      three = new THREE.Bootstrap(options);
+    three = new THREE.Bootstrap(options);
 
-      three.on('pre', function () {
-        pre = +new Date();
-        stall(pre);
-      });
-      three.on('update', function () {
-        update = +new Date();
-        stall(update);
-      });
-      three.on('render', function () {
-        render = +new Date();
-        stall(render);
-      });
-      three.on('post', function () {
-        post = +new Date();
-      });
-
-      three.init();
+    three.on('pre', function () {
+      pre = +new Date();
+      stall(pre);
+    });
+    three.on('update', function () {
+      update = +new Date();
+      stall(update);
+    });
+    three.on('render', function () {
+      render = +new Date();
+      stall(render);
+    });
+    three.on('post', function () {
+      post = +new Date();
     });
 
-    waitsFor(function() {
-      return pre > 0;
-    }, "The pre event should be called", 100);
+    three.init();
+    done();
+  });
 
-    waitsFor(function() {
-      return update > 0;
-    }, "The update event should be called", 100);
+  // Hack: no option to wait for multiple async calls without using Promises
+  // Create multiple beforeEach calls:
+  // https://github.com/jasmine/jasmine/issues/526
+  beforeEach(function (done) {
+    setTimeout(function() {
+      if (pre > 0) done();
+    }, 500);
+  });
+  beforeEach(function (done) {
+    setTimeout(function() {
+      if(update > 0) done();
+    }, 500);
+  });
+  beforeEach(function (done) {
+    setTimeout(function() {
+      if (render > 0) done();
+    }, 500);
+  });
+  beforeEach(function (done) {
+    setTimeout(function() {
+      if (post > 0) done();
+    }, 500);
+  });
 
-    waitsFor(function() {
-      return render > 0;
-    }, "The render event should be called", 100);
+  it("wait until all loops complete", function () { // sync function
+    expect(pre).toBeGreaterThan(0);
+    expect(update).toBeGreaterThan(0);
+    expect(render).toBeGreaterThan(0);
+    expect(post).toBeGreaterThan(0);
 
-    waitsFor(function() {
-      return post > 0;
-    }, "The post event should be called", 100);
+    expect(update).toBeGreaterThan(pre);
+    expect(render).toBeGreaterThan(update);
+    expect(post).toBeGreaterThan(render);
 
-    runs(function () {
-      expect(pre).toBeGreaterThan(0);
-      expect(update).toBeGreaterThan(0);
-      expect(render).toBeGreaterThan(0);
-      expect(post).toBeGreaterThan(0);
-
-      expect(update).toBeGreaterThan(pre);
-      expect(render).toBeGreaterThan(update);
-      expect(post).toBeGreaterThan(render);
-
-      three.destroy();
-    });
-
+    three.destroy();
   });
 
 });
