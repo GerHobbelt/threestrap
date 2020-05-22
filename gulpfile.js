@@ -1,5 +1,4 @@
 const { task, src, dest, series, parallel, pipe, watch } = require('gulp');
-var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var rename = require("gulp-rename");
 
@@ -58,6 +57,7 @@ var extra = [
 var bundle = vendor.concat(core).concat(extra);
 
 var test = [
+  'node_modules/lodash/lodash.js',
   'node_modules/three/build/three.js',
 ].concat(builds.bundle).concat([
   'test/**/*.spec.js',
@@ -79,15 +79,6 @@ task('bundle', function () {
   return src(bundle)
     .pipe(concat(builds.bundle))
     .pipe(dest('.'));
-});
-
-task('uglify-js', function () {
-  return src(products)
-    .pipe(uglify())
-    .pipe(rename({
-      extname: ".min.js"
-    }))
-    .pipe(dest('build'));
 });
 
 task('karma', function(done) {
@@ -143,7 +134,7 @@ task('build',
 }));
 
 task('default',
-  series('build', 'uglify-js', function defaultEnd(done) {
+  series('build', function defaultEnd(done) {
   done();
 }));
 
