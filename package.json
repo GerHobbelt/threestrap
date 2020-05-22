@@ -1,6 +1,6 @@
 {
-  "name": "threestrap",
-  "version": "0.0.12-dev",
+  "name": "@gerhobbelt/threestrap",
+  "version": "0.0.12-3",
   "description": "Minimal Three.js Bootstrapper",
   "repository": {
     "type": "git",
@@ -10,7 +10,8 @@
   "dependencies": {},
   "scripts": {
     "build": "gulp",
-    "test": "gulp test"
+    "test": "gulp test",
+    "pub": "npm publish --access public"
   },
   "devDependencies": {
     "gulp": "^4.0.2",
